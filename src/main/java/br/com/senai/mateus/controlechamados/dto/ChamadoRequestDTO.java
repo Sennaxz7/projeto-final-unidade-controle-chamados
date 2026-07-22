@@ -1,10 +1,7 @@
 package br.com.senai.mateus.controlechamados.dto;
 
 import br.com.senai.mateus.controlechamados.enums.Prioridade;
-import br.com.senai.mateus.controlechamados.enums.StatusChamado;
 
-import javax.naming.ldap.PagedResultsControl;
-import java.time.LocalDate;
 import java.util.List;
 
 public class ChamadoRequestDTO {
@@ -13,20 +10,18 @@ public class ChamadoRequestDTO {
     private String solicitante;
     private String local;
     private Prioridade prioridade;
-    private StatusChamado status;
     private Long categoriaId;
     private List<Long> tecnicosIds;
 
     public ChamadoRequestDTO(){}
 
     public ChamadoRequestDTO(String titulo, String descricao, String solicitante, String local,
-                             Prioridade prioridade, StatusChamado status, Long categoriaId, List<Long> tecnicosIds) {
+                             Prioridade prioridade, Long categoriaId, List<Long> tecnicosIds) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.solicitante = solicitante;
         this.local = local;
         this.prioridade = prioridade;
-        this.status = status;
         this.categoriaId = categoriaId;
         this.tecnicosIds = tecnicosIds;
     }
@@ -69,14 +64,6 @@ public class ChamadoRequestDTO {
 
     public void setPrioridade(Prioridade prioridade) {
         this.prioridade = prioridade;
-    }
-
-    public StatusChamado getStatus() {
-        return status;
-    }
-
-    public void setStatus(StatusChamado status) {
-        this.status = status;
     }
 
     public Long getCategoriaId() {
