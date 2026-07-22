@@ -2,14 +2,14 @@ package br.com.senai.mateus.controlechamados.dto;
 
 import br.com.senai.mateus.controlechamados.enums.Ativo;
 
-public class TecnicoResquestDTO {
+public class TecnicoRequestDTO {
     private String nome;
     private String email;
     private String especialidade;
     private Ativo ativo;
 
-    public TecnicoResquestDTO() {}
-    public TecnicoResquestDTO(String nome, String email, String especialidade, Ativo ativo) {
+    public TecnicoRequestDTO() {}
+    public TecnicoRequestDTO(String nome, String email, String especialidade, Ativo ativo) {
         this.nome = nome;
         this.email = email;
         this.especialidade = especialidade;
