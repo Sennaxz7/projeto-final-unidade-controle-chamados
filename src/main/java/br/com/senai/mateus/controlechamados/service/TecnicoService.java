@@ -34,9 +34,9 @@ public class TecnicoService {
     }
 
     public TecnicoResponseDTO salvar(TecnicoRequestDTO requestDTO) {
-        validarDados(requestDTO);
+        validarDados(requestDTO, null);
         Tecnico tecnico = new Tecnico();
-        tecnico.setNome(requestDTO.getNome());
+        tecnico.setNome(requestDTO.getNome().trim());
         tecnico.setEmail(requestDTO.getEmail().trim());
         tecnico.setEspecialidade(requestDTO.getEspecialidade());
         tecnico.setAtivo(requestDTO.getAtivo() != null ? requestDTO.getAtivo() : Ativo.ATIVO);
@@ -45,9 +45,9 @@ public class TecnicoService {
 
     public TecnicoResponseDTO atualizar(Long id, TecnicoRequestDTO requestDTO) {
         Tecnico tecnico = buscarTecnicoPorId(id);
-        validarDados(requestDTO);
-        tecnico.setNome(requestDTO.getNome());
-        tecnico.setEmail(requestDTO.getEmail());
+        validarDados(requestDTO, id);
+        tecnico.setNome(requestDTO.getNome().trim());
+        tecnico.setEmail(requestDTO.getEmail().trim());
         tecnico.setEspecialidade(requestDTO.getEspecialidade());
         if (requestDTO.getAtivo() != null) tecnico.setAtivo(requestDTO.getAtivo());
         return converterParaResponse(tecnicoRepository.save(tecnico));
@@ -61,13 +61,27 @@ public class TecnicoService {
         tecnicoRepository.delete(tecnico);
     }
 
-    private void validarDados(TecnicoRequestDTO requestDTO) {
+    private void validarEmail(String email, Long id) {
+        boolean emailExiste = id == null
+                ? tecnicoRepository.existsByEmail(email)
+                : tecnicoRepository.existsByEmailAndIdNot(email, id);
+
+        if (emailExiste) {
+            throw new RegraDeNegocioException(
+                    "Já existe um técnico cadastrado com esse e-mail."
+            );
+        }
+    }
+
+    private void validarDados(TecnicoRequestDTO requestDTO, Long id) {
         if (requestDTO.getNome() == null || requestDTO.getNome().trim().isEmpty()) {
             throw new RegraDeNegocioException("O nome do técnico é obrigatório.");
         }
         if (requestDTO.getEmail() == null || requestDTO.getEmail().trim().isEmpty()) {
-            throw new RegraDeNegocioException("O email do técnico é obrigatório.");
+            throw new RegraDeNegocioException("O e-mail do técnico é obrigatório.");
         }
+
+        validarEmail(requestDTO.getEmail().trim(), id);
     }
 
     private Tecnico buscarTecnicoPorId(Long id) {
