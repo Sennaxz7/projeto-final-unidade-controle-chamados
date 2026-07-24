@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChamadoRepository extends JpaRepository<Chamado, Long> {
     boolean existsByCategoriaId(Long id);
+    boolean existsByTecnicosId(Long id);
 }
