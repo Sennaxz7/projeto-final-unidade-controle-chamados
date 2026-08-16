@@ -73,7 +73,7 @@ public class CategoriaService {
             );
         }
     }
-    private CategoriaResponseDTO converterParaResponse(Categoria categoria) {
+    public CategoriaResponseDTO converterParaResponse(Categoria categoria) {
         return new CategoriaResponseDTO(
                 categoria.getId(),
                 categoria.getNome(),
