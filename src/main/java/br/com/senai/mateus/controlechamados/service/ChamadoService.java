@@ -6,6 +6,7 @@ import br.com.senai.mateus.controlechamados.entity.Chamado;
 import br.com.senai.mateus.controlechamados.entity.Tecnico;
 import br.com.senai.mateus.controlechamados.enums.Ativo;
 import br.com.senai.mateus.controlechamados.enums.StatusChamado;
+import br.com.senai.mateus.controlechamados.exception.ConflitoException;
 import br.com.senai.mateus.controlechamados.exception.RecursoNaoEncontradoException;
 import br.com.senai.mateus.controlechamados.exception.RegraDeNegocioException;
 import br.com.senai.mateus.controlechamados.repository.ChamadoRepository;
@@ -111,6 +112,7 @@ public class ChamadoService {
         }
         List<Tecnico> tecnicos = buscarTecnicos(tecnicoDTO.getTecnicosIds());
         validarTecnicosAtivo(tecnicos);
+        validarTecnicosJaVinculados(chamado, tecnicos);
         chamado.setTecnicos(tecnicos);
         return converterParaResponse(chamadoRepository.save(chamado));
     }
@@ -121,6 +123,20 @@ public class ChamadoService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Chamado com o ID "+id+" não foi encontrado."
                 ));
+    }
+
+    private void validarTecnicosJaVinculados(Chamado chamado, List<Tecnico> novosTecnicos) {
+        List<Tecnico> tecnicosAtuais = chamado.getTecnicos();
+        if (tecnicosAtuais == null || tecnicosAtuais.isEmpty()) return;
+        for (Tecnico t : novosTecnicos) {
+            boolean jaVinculado = tecnicosAtuais.stream()
+                    .anyMatch(existem -> existem.getId().equals(t.getId()));
+            if (jaVinculado) {
+                throw new ConflitoException(
+                        "O técnico " + t.getNome() + " já está vinculado a este chamado."
+                );
+            }
+        }
     }
 
     private List<Tecnico> buscarTecnicos(List<Long> ids) {
