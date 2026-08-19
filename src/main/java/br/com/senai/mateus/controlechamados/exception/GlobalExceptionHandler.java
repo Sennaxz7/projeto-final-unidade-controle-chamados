@@ -29,6 +29,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
     }
 
+    @ExceptionHandler(ConflitoException.class)
+    public ResponseEntity<ErroResponse> tratarConflitoExcetion(ConflitoException exception) {
+        ErroResponse erro = new ErroResponse(
+                HttpStatus.CONFLICT.value(),
+                "Conflito",
+                exception.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErroResponse> tratarErroGenerico(Exception exception) {
         ErroResponse erro = new ErroResponse(
