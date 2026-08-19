@@ -4,6 +4,7 @@ import br.com.senai.mateus.controlechamados.dto.TecnicoRequestDTO;
 import br.com.senai.mateus.controlechamados.dto.TecnicoResponseDTO;
 import br.com.senai.mateus.controlechamados.entity.Tecnico;
 import br.com.senai.mateus.controlechamados.enums.Ativo;
+import br.com.senai.mateus.controlechamados.exception.ConflitoException;
 import br.com.senai.mateus.controlechamados.exception.RecursoNaoEncontradoException;
 import br.com.senai.mateus.controlechamados.exception.RegraDeNegocioException;
 import br.com.senai.mateus.controlechamados.repository.ChamadoRepository;
@@ -67,7 +68,7 @@ public class TecnicoService {
                 : tecnicoRepository.existsByEmailAndIdNot(email, id);
 
         if (emailExiste) {
-            throw new RegraDeNegocioException(
+            throw new ConflitoException(
                     "Já existe um técnico cadastrado com esse e-mail."
             );
         }
