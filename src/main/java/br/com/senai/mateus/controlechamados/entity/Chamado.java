@@ -11,7 +11,7 @@ import java.util.List;
 public class Chamado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     private String titulo;
     private String descricao;
