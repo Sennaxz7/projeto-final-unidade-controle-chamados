@@ -105,7 +105,7 @@ public class ChamadoService {
         return converterParaResponse(chamadoRepository.save(chamado));
     }
 
-    public ChamadoResponseDTO vincularTecnico(Long id, VincularTecnicoDTO tecnicoDTO) {
+    public ChamadoResponseDTO vincularTecnicos(Long id, AlterarTecnicoDTO tecnicoDTO) {
         Chamado chamado = buscarChamadoPorId(id);
         if (chamado.getStatus() == StatusChamado.FINALIZADO) {
             throw new RegraDeNegocioException("Um chamado FINALIZADO não poderá receber novos técnicos.");
@@ -117,12 +117,48 @@ public class ChamadoService {
         return converterParaResponse(chamadoRepository.save(chamado));
     }
 
+    public ChamadoResponseDTO desvicularTecnicos(Long id, AlterarTecnicoDTO tecnicoDTO) {
+        Chamado chamado = buscarChamadoPorId(id);
+        if (chamado.getStatus() == StatusChamado.FINALIZADO) {
+            throw new RegraDeNegocioException("Não é possível desvincular técnicos de um chamado FINALIZADO.");
+        }
+        List<Long> tecnicoIds = tecnicoDTO.getTecnicosIds();
+        validarTecnicosVinculados(chamado, tecnicoIds);
+
+        chamado.getTecnicos().removeIf(tecnico ->
+                tecnicoIds.contains(tecnico.getId()));
+        return converterParaResponse(chamadoRepository.save(chamado));
+    }
 
     private Chamado buscarChamadoPorId(Long id) {
         return chamadoRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Chamado com o ID "+id+" não foi encontrado."
                 ));
+    }
+
+    private void validarTecnicosVinculados(Chamado chamado, List<Long> tecnicosIds) {
+        if (tecnicosIds == null || tecnicosIds.isEmpty()) {
+            throw new RegraDeNegocioException(
+                    "Informe pelo menos um técnico para desvincular."
+            );
+        }
+
+        if (chamado.getTecnicos() == null || chamado.getTecnicos().isEmpty()) {
+            throw new RegraDeNegocioException(
+                    "Este chamado não possui técnicos vinculados."
+            );
+        }
+
+        for (Long tecnicoId : tecnicosIds) {
+            boolean estaVinculado = chamado.getTecnicos().stream()
+                    .anyMatch( tecnico -> tecnico.getId().equals(tecnicoId));
+            if (!estaVinculado) {
+                throw new RegraDeNegocioException(
+                        "O técnico com ID "+tecnicoId+" não está vinculado a este chamado."
+                );
+            }
+        }
     }
 
     private void validarTecnicosJaVinculados(Chamado chamado, List<Tecnico> novosTecnicos) {

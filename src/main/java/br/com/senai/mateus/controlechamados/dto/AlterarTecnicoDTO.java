@@ -2,10 +2,10 @@ package br.com.senai.mateus.controlechamados.dto;
 
 import java.util.List;
 
-public class VincularTecnicoDTO {
+public class AlterarTecnicoDTO {
     private List<Long> tecnicosIds;
 
-    public VincularTecnicoDTO() {
+    public AlterarTecnicoDTO() {
     }
 
     public List<Long> getTecnicosIds() {
