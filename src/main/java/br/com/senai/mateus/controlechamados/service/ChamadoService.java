@@ -41,7 +41,7 @@ public class ChamadoService {
     public ChamadoResponseDTO salvar(ChamadoRequestDTO chamadoRequestDTO) {
         validarDados(chamadoRequestDTO);
         Chamado chamado = new Chamado();
-        Categoria categoria = categoriaService.buscasCategoriaPorId(chamadoRequestDTO.getCategoriaId());
+        Categoria categoria = categoriaService.buscarCategoriaPorId(chamadoRequestDTO.getCategoriaId());
         List<Tecnico> tecnicos = buscarTecnicos(chamadoRequestDTO.getTecnicosIds());
         validarTecnicosAtivo(tecnicos);
 
@@ -64,7 +64,7 @@ public class ChamadoService {
         if (chamado.getStatus() == StatusChamado.FINALIZADO){
             throw new RegraDeNegocioException("Não é possível alterar um chamado finalizado.");
         }
-        Categoria categoria = categoriaService.buscasCategoriaPorId(chamadoRequestDTO.getCategoriaId());
+        Categoria categoria = categoriaService.buscarCategoriaPorId(chamadoRequestDTO.getCategoriaId());
         validarIdsUnicos(chamadoRequestDTO.getTecnicosIds());
         List<Tecnico> tecnicos = buscarTecnicos(chamadoRequestDTO.getTecnicosIds());
         validarTecnicosAtivo(tecnicos);

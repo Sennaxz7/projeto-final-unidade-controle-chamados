@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 public class CategoriaService {
-    public final CategoriaRepository categoriaRepository;
+    private final CategoriaRepository categoriaRepository;
     private final ChamadoRepository chamadoRepository;
 
     public CategoriaService(CategoriaRepository categoriaRepository, ChamadoRepository chamadoRepository) {
@@ -28,21 +28,27 @@ public class CategoriaService {
     }
 
     public CategoriaResponseDTO buscarPorId(Long id) {
-        return converterParaResponse(buscasCategoriaPorId(id));
+        return converterParaResponse(buscarCategoriaPorId(id));
     }
 
     public CategoriaResponseDTO salvar(CategoriaRequestDTO requestDTO) {
         validarCategoria(requestDTO);
+        if (categoriaRepository.existsByNome(requestDTO.getNome().trim())) {
+            throw new RegraDeNegocioException("Ja existe categoria com esse nome.");
+        }
         Categoria categoria = new Categoria();
-        categoria.setNome(requestDTO.getNome());
-        categoria.setDescricao(requestDTO.getDescricao());
+        categoria.setNome(requestDTO.getNome().trim());
+        categoria.setDescricao(requestDTO.getDescricao().trim());
 
         return converterParaResponse(categoriaRepository.save(categoria));
     }
 
     public CategoriaResponseDTO atualizar(Long id, CategoriaRequestDTO requestDTO) {
         validarCategoria(requestDTO);
-        Categoria categoriaAtualizada = buscasCategoriaPorId(id);
+        if (categoriaRepository.existsByNome(requestDTO.getNome().trim())) {
+            throw new RegraDeNegocioException("Ja existe categoria com esse nome.");
+        }
+        Categoria categoriaAtualizada = buscarCategoriaPorId(id);
         categoriaAtualizada.setNome(requestDTO.getNome());
         categoriaAtualizada.setDescricao(requestDTO.getDescricao());
 
@@ -50,7 +56,7 @@ public class CategoriaService {
     }
 
     public void excluir(Long id) {
-        Categoria categoria = buscasCategoriaPorId(id);
+        Categoria categoria = buscarCategoriaPorId(id);
         if(chamadoRepository.existsByCategoriaId(id)) {
             throw new RegraDeNegocioException(
                     "Não é possível excluir um categoria vinculada a um chamado."
@@ -59,7 +65,7 @@ public class CategoriaService {
         categoriaRepository.delete(categoria);
     }
 
-    public Categoria buscasCategoriaPorId(Long id) {
+    public Categoria buscarCategoriaPorId(Long id) {
         return categoriaRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Categoria com ID "+id+" não encontrada."
