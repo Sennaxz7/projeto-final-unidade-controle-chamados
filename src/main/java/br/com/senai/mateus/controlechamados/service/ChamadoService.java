@@ -59,12 +59,13 @@ public class ChamadoService {
     }
 
     public ChamadoResponseDTO atualizar(Long id, ChamadoRequestDTO chamadoRequestDTO) {
-        validarDados(chamadoRequestDTO);
         Chamado chamado = buscarChamadoPorId(id);
+        validarDados(chamadoRequestDTO);
         if (chamado.getStatus() == StatusChamado.FINALIZADO){
             throw new RegraDeNegocioException("Não é possível alterar um chamado finalizado.");
         }
         Categoria categoria = categoriaService.buscasCategoriaPorId(chamadoRequestDTO.getCategoriaId());
+        validarIdsUnicos(chamadoRequestDTO.getTecnicosIds());
         List<Tecnico> tecnicos = buscarTecnicos(chamadoRequestDTO.getTecnicosIds());
         validarTecnicosAtivo(tecnicos);
         chamado.setTitulo(chamadoRequestDTO.getTitulo().trim());
@@ -88,6 +89,11 @@ public class ChamadoService {
 
     public ChamadoResponseDTO atualizarStatus(Long id, AtualizarStatusDTO statusDTO) {
         Chamado chamado = buscarChamadoPorId(id);
+        if (statusDTO == null || statusDTO.getStatusChamado() == null) {
+            throw new RegraDeNegocioException(
+                    "O status do chamado é obrigatório."
+            );
+        }
         if (chamado.getStatus() == StatusChamado.FINALIZADO) {
             throw new RegraDeNegocioException("Não é possível alterar o status de um chamado finalizado.");
         }
@@ -110,19 +116,28 @@ public class ChamadoService {
         if (chamado.getStatus() == StatusChamado.FINALIZADO) {
             throw new RegraDeNegocioException("Um chamado FINALIZADO não poderá receber novos técnicos.");
         }
-        List<Tecnico> tecnicos = buscarTecnicos(tecnicoDTO.getTecnicosIds());
+        List<Long> ids = tecnicoDTO.getTecnicosIds();
+        validarIdsUnicos(ids);
+        if (ids == null || ids.isEmpty()) {
+            throw new RegraDeNegocioException(
+                    "Informe pelo menos um técnico."
+            );
+        }
+
+        List<Tecnico> tecnicos = buscarTecnicos(ids);
         validarTecnicosAtivo(tecnicos);
         validarTecnicosJaVinculados(chamado, tecnicos);
-        chamado.setTecnicos(tecnicos);
+        chamado.getTecnicos().addAll(tecnicos);
         return converterParaResponse(chamadoRepository.save(chamado));
     }
 
-    public ChamadoResponseDTO desvicularTecnicos(Long id, AlterarTecnicoDTO tecnicoDTO) {
+    public ChamadoResponseDTO desvincularTecnicos(Long id, AlterarTecnicoDTO tecnicoDTO) {
         Chamado chamado = buscarChamadoPorId(id);
         if (chamado.getStatus() == StatusChamado.FINALIZADO) {
             throw new RegraDeNegocioException("Não é possível desvincular técnicos de um chamado FINALIZADO.");
         }
         List<Long> tecnicoIds = tecnicoDTO.getTecnicosIds();
+        validarIdsUnicos(tecnicoIds);
         validarTecnicosVinculados(chamado, tecnicoIds);
 
         chamado.getTecnicos().removeIf(tecnico ->
@@ -189,6 +204,14 @@ public class ChamadoService {
             if (t.getAtivo() == Ativo.INATIVO) {
                 throw new RegraDeNegocioException("O técnico " + t.getNome() + " está inativo e não pode ser vinculado.");
             }
+        }
+    }
+
+    private void validarIdsUnicos(List<Long> ids) {
+        if (ids != null && ids.stream().distinct().count() != ids.size()) {
+            throw new RegraDeNegocioException(
+                    "Não é permitido informar técnicos duplicados."
+            );
         }
     }
 
