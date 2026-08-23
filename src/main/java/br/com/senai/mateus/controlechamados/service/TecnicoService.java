@@ -57,7 +57,7 @@ public class TecnicoService {
     public void deletar(Long id) {
         Tecnico tecnico = buscarTecnicoPorId(id);
         if (chamadoRepository.existsByTecnicosId(id)) {
-            throw new RegraDeNegocioException("Não é possível excluir técnicos vinculados a chamados.");
+            throw new ConflitoException("Não é possível excluir técnicos vinculados a chamados.");
         }
         tecnicoRepository.delete(tecnico);
     }
