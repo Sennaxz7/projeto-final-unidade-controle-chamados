@@ -3,6 +3,7 @@ package br.com.senai.mateus.controlechamados.service;
 import br.com.senai.mateus.controlechamados.dto.CategoriaRequestDTO;
 import br.com.senai.mateus.controlechamados.dto.CategoriaResponseDTO;
 import br.com.senai.mateus.controlechamados.entity.Categoria;
+import br.com.senai.mateus.controlechamados.exception.ConflitoException;
 import br.com.senai.mateus.controlechamados.exception.RecursoNaoEncontradoException;
 import br.com.senai.mateus.controlechamados.exception.RegraDeNegocioException;
 import br.com.senai.mateus.controlechamados.repository.CategoriaRepository;
@@ -58,7 +59,7 @@ public class CategoriaService {
     public void excluir(Long id) {
         Categoria categoria = buscarCategoriaPorId(id);
         if(chamadoRepository.existsByCategoriaId(id)) {
-            throw new RegraDeNegocioException(
+            throw new ConflitoException(
                     "Não é possível excluir um categoria vinculada a um chamado."
             );
         }
@@ -76,6 +77,11 @@ public class CategoriaService {
         if (requestDTO.getNome() == null || requestDTO.getNome().trim().isEmpty()) {
             throw new RegraDeNegocioException(
                     "O nome da Categoria é obrigatório"
+            );
+        }
+        if (requestDTO.getDescricao() == null || requestDTO.getDescricao().trim().isEmpty()) {
+            throw new RegraDeNegocioException(
+                    "A descrição da Categoria é obrigatória"
             );
         }
     }
