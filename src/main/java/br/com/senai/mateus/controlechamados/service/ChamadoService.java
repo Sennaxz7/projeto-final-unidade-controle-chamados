@@ -94,9 +94,6 @@ public class ChamadoService {
                     "O status do chamado é obrigatório."
             );
         }
-        if (chamado.getStatus() == StatusChamado.FINALIZADO) {
-            throw new RegraDeNegocioException("Não é possível alterar o status de um chamado finalizado.");
-        }
         if (statusDTO.getStatusChamado() == StatusChamado.EM_ANDAMENTO && (chamado.getTecnicos() == null
         || chamado.getTecnicos().isEmpty())) {
             throw new RegraDeNegocioException(
