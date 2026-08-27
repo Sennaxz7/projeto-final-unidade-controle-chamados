@@ -14,6 +14,7 @@ import br.com.senai.mateus.controlechamados.repository.TecnicoRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -89,6 +90,11 @@ public class ChamadoService {
 
     public ChamadoResponseDTO atualizarStatus(Long id, AtualizarStatusDTO statusDTO) {
         Chamado chamado = buscarChamadoPorId(id);
+
+        if (chamado.getStatus() == StatusChamado.FINALIZADO) {
+            throw new RegraDeNegocioException(
+                    "Um chamado finalizado não pode ter seu status alterado.");
+        }
         if (statusDTO == null || statusDTO.getStatusChamado() == null) {
             throw new RegraDeNegocioException(
                     "O status do chamado é obrigatório."
@@ -188,7 +194,7 @@ public class ChamadoService {
     }
 
     private List<Tecnico> buscarTecnicos(List<Long> ids) {
-        if (ids == null || ids.isEmpty()) return List.of();
+        if (ids == null || ids.isEmpty()) return new ArrayList<>();
         List<Tecnico> tecnicos = tecnicoRepository.findAllById(ids);
         if (tecnicos.size() != ids.size()) {
             throw new RegraDeNegocioException("Um ou mais técnicos não foram encontrados.");
