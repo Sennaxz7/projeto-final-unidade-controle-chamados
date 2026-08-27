@@ -46,12 +46,13 @@ public class CategoriaService {
 
     public CategoriaResponseDTO atualizar(Long id, CategoriaRequestDTO requestDTO) {
         validarCategoria(requestDTO);
+        Categoria categoriaAtualizada = buscarCategoriaPorId(id);
         if (categoriaRepository.existsByNome(requestDTO.getNome().trim())) {
             throw new RegraDeNegocioException("Ja existe categoria com esse nome.");
         }
-        Categoria categoriaAtualizada = buscarCategoriaPorId(id);
-        categoriaAtualizada.setNome(requestDTO.getNome());
-        categoriaAtualizada.setDescricao(requestDTO.getDescricao());
+
+        categoriaAtualizada.setNome(requestDTO.getNome().trim());
+        categoriaAtualizada.setDescricao(requestDTO.getDescricao().trim());
 
         return converterParaResponse(categoriaRepository.save(categoriaAtualizada));
     }
