@@ -41,6 +41,7 @@ public class ChamadoService {
 
     public ChamadoResponseDTO salvar(ChamadoRequestDTO chamadoRequestDTO) {
         validarDados(chamadoRequestDTO);
+        validarIdsUnicos(chamadoRequestDTO.getTecnicosIds());
         Chamado chamado = new Chamado();
         Categoria categoria = categoriaService.buscarCategoriaPorId(chamadoRequestDTO.getCategoriaId());
         List<Tecnico> tecnicos = buscarTecnicos(chamadoRequestDTO.getTecnicosIds());
@@ -145,7 +146,7 @@ public class ChamadoService {
 
         chamado.getTecnicos().removeIf(tecnico ->
                 tecnicoIds.contains(tecnico.getId()));
-        
+
         if (chamado.getStatus() == StatusChamado.EM_ANDAMENTO && chamado.getTecnicos().isEmpty()) {
             throw new RegraDeNegocioException(
                     "Não é possível remover todos os técnicos de um chamado EM_ANDAMENTO.");
