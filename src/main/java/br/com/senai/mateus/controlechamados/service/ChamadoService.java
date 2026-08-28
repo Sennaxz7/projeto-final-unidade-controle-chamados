@@ -145,6 +145,12 @@ public class ChamadoService {
 
         chamado.getTecnicos().removeIf(tecnico ->
                 tecnicoIds.contains(tecnico.getId()));
+        
+        if (chamado.getStatus() == StatusChamado.EM_ANDAMENTO && chamado.getTecnicos().isEmpty()) {
+            throw new RegraDeNegocioException(
+                    "Não é possível remover todos os técnicos de um chamado EM_ANDAMENTO.");
+        }
+
         return converterParaResponse(chamadoRepository.save(chamado));
     }
 
