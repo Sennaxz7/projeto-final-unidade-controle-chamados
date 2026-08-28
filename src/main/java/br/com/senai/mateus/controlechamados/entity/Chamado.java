@@ -5,6 +5,7 @@ import br.com.senai.mateus.controlechamados.enums.StatusChamado;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,7 +37,7 @@ public class Chamado {
         joinColumns = @JoinColumn(name = "chamado_id"),
         inverseJoinColumns = @JoinColumn(name = "tecnico_id")
     )
-    private List<Tecnico> tecnicos;
+    private List<Tecnico> tecnicos = new ArrayList<>();
     
     public Chamado() {}
 

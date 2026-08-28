@@ -14,7 +14,7 @@ public class Categoria {
     private String descricao;
 
     @OneToMany(mappedBy = "categoria")
-    public List<Chamado> chamados;
+    private List<Chamado> chamados;
 
     public Categoria() {}
     public Categoria(Long id, String nome, String descricao, List<Chamado> chamados) {
