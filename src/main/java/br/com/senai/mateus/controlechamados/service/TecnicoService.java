@@ -64,7 +64,7 @@ public class TecnicoService {
 
     private void validarEmail(String email, Long id) {
         boolean emailExiste = id == null
-                ? tecnicoRepository.existsByEmail(email)
+                ? tecnicoRepository.existsByEmailIgnoreCase(email)
                 : tecnicoRepository.existsByEmailAndIdNot(email, id);
 
         if (emailExiste) {

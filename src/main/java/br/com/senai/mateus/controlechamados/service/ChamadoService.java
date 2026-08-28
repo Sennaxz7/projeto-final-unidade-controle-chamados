@@ -204,7 +204,7 @@ public class ChamadoService {
         if (ids == null || ids.isEmpty()) return new ArrayList<>();
         List<Tecnico> tecnicos = tecnicoRepository.findAllById(ids);
         if (tecnicos.size() != ids.size()) {
-            throw new RegraDeNegocioException("Um ou mais técnicos não foram encontrados.");
+            throw new RecursoNaoEncontradoException("Um ou mais técnicos não foram encontrados.");
         }
         return tecnicos;
     }
