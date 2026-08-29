@@ -179,7 +179,7 @@ public class ChamadoService {
             boolean estaVinculado = chamado.getTecnicos().stream()
                     .anyMatch( tecnico -> tecnico.getId().equals(tecnicoId));
             if (!estaVinculado) {
-                throw new RegraDeNegocioException(
+                throw new RecursoNaoEncontradoException(
                         "O técnico com ID "+tecnicoId+" não está vinculado a este chamado."
                 );
             }
