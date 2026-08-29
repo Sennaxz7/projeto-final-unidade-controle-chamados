@@ -106,6 +106,14 @@ public class ChamadoService {
             throw new RegraDeNegocioException(
                     "Um chamado só poderá ser alterado para EM_ANDAMENTO se possuir pelo menos um técnico vinculado.");
         }
+        if ((statusDTO.getStatusChamado() == StatusChamado.EM_ANDAMENTO
+                || statusDTO.getStatusChamado() == StatusChamado.FINALIZADO)
+                && (chamado.getTecnicos() == null || chamado.getTecnicos().isEmpty())) {
+            throw new RegraDeNegocioException(
+                    "Um chamado só poderá ser alterado para " + statusDTO.getStatusChamado()
+                            + " se possuir pelo menos um técnico vinculado.");
+        }
+
         chamado.setStatus(statusDTO.getStatusChamado());
         if (statusDTO.getStatusChamado() == StatusChamado.FINALIZADO) {
             chamado.setDataFinalizacao(LocalDate.now());
