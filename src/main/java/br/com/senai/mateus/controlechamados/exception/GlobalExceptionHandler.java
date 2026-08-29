@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import javax.swing.text.html.parser.Entity;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(RecursoNaoEncontradoException.class)
@@ -46,7 +44,7 @@ public class GlobalExceptionHandler {
         ErroResponse erro = new ErroResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "Erro interno",
-                exception.getMessage()
+                "Ocorreu um erro inesperado. Tente novamente mais tarde."
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(erro);
     }
