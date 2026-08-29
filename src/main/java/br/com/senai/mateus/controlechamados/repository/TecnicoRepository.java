@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TecnicoRepository extends JpaRepository<Tecnico, Long> {
     boolean existsByEmailIgnoreCase(String email);
-    boolean existsByEmailAndIdNot(String email, Long id);
+    boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 }

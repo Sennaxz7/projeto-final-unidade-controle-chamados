@@ -65,7 +65,7 @@ public class TecnicoService {
     private void validarEmail(String email, Long id) {
         boolean emailExiste = id == null
                 ? tecnicoRepository.existsByEmailIgnoreCase(email)
-                : tecnicoRepository.existsByEmailAndIdNot(email, id);
+                : tecnicoRepository.existsByEmailIgnoreCaseAndIdNot(email, id);
 
         if (emailExiste) {
             throw new ConflitoException(
